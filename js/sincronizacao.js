@@ -1,15 +1,20 @@
 (function(){
 
-$("#sync").click(function(){
+//Criação de um evento, no lugar do evento click
+//$("#sync").click(function(){
+$("document").on("precisaSincronizar", function(){
     $("#sync").removeClass("botaoSync--sincronizado");
     $("#sync").addClass("botaoSync--esperando")
+});
 
+$(document).on("precisaSincronizar", function(){
     var cartoes = [];
 
     $(".cartao").each(function(){
       var cartao = {};
 
       cartao.conteudo = $(this).find(".cartao-conteudo").text();
+      cartao.cor = $(this).css("background-color");
       cartoes.push(cartao);
 
     });
@@ -28,6 +33,12 @@ $("#sync").click(function(){
         success:function(res){
           $("#sync").addClass("botaoSync--sincronizado")
           console.log(res.quantidade + " cartões salvos em "+ res.usuario);
+
+          var quantidadeRemovidos= controladorDeCartoes.idUltimoCartao() -
+                                                        res.quantidade
+
+          console.log(quantidadeRemovidos + " cartões removidos");
+
 
         },
         error:function(){
@@ -48,6 +59,10 @@ $("#sync").click(function(){
 
 });
 
+$("#sync").click(function(){
+    $(document).trigger("precisaSincronizar");
+});
+
 var usuario = "loliveiras@gmail.com";
 $.getJSON("https://ceep.herokuapp.com/cartoes/carregar?callback=?",
         {usuario: usuario}, function(res){
@@ -56,7 +71,7 @@ $.getJSON("https://ceep.herokuapp.com/cartoes/carregar?callback=?",
            console.log(cartoes.length + " carregados em " + res.usuario);
            cartoes.forEach(function(cartao){
 
-           adicionaCartao(cartao.conteudo);
+           controladorDeCartoes.adicionaCartao(cartao.conteudo);
            });
         }
 );

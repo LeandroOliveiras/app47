@@ -22,3 +22,17 @@ $novoCartao.addEventListener('submit', function(event){
 
   };
 });
+
+$(".novoCartao").submit(function(event){
+    var campoConteudo = $(".novoCartao-conteudo");
+    var conteudo = campoConteudo.val().trim()
+                                      .replace(/\n/g, "<br>");
+    if(conteudo){
+      console.log(conteudo);
+      controladorDeCartoes.adicionaCartao(conteudo);
+      $(document).trigger("precisaSincronizar");
+    }
+    campoConteudo.val("");
+
+    event.preventDefault();
+});
